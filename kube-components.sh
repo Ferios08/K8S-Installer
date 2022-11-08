@@ -18,6 +18,14 @@ sudo kubeadm init --cri-socket=unix:///var/run/cri-dockerd.sock
 mkdir -p $HOME/.kube
 sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
 sudo chown $(id -u):$(id -g) $HOME/.kube/config
-  
+
+# Taint Master
+kubectl taint nodes --all node-role.kubernetes.io/control-plane-
+
+# Install & Patch Ingress Nginx
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.4.0/deploy/static/provider/baremetal/deploy.yaml
+kubectl patch svc ingress-nginx-controller -n ingress-nginx -p '{"spec":{"externalIPs":["10.0.0.4"]}}'
+
+
 # EOF
   
